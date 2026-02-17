@@ -80,7 +80,6 @@ async function processCaptionSpan(span, videoId) {
       return translateSentence(s);
     })
   );
-  console.log(`Original caption: "${original}" => Translated parts:`, translatedParts);
   span.textContent = translatedParts.join(" ");
   console.log(`Translated caption: "${original}" => "${span.textContent}"`);
   // Mark the translated text to avoid reprocessing our own mutation

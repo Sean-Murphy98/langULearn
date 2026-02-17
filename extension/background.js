@@ -35,7 +35,13 @@ async function translateText(text, targetLang) {
   }
 
   const data = await res.json();
-  return data.translatedText || "";
+  const translated =
+    data &&
+    data.data &&
+    Array.isArray(data.data.translations) &&
+    data.data.translations[0] &&
+    data.data.translations[0].translatedText;
+  return translated || "";
 }
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
