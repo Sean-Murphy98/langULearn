@@ -1,0 +1,84 @@
+:root {
+  color-scheme: light;
+  --bg: #f7f3ed;
+  --card: #ffffff;
+  --text: #1f1f1f;
+  --muted: #6b6b6b;
+  --accent: #0f766e;
+}
+
+body {
+  margin: 0;
+  font-family: "Georgia", "Times New Roman", serif;
+  background: radial-gradient(1200px 500px at 20% -10%, #e9f0ec, var(--bg));
+  color: var(--text);
+}
+
+.container {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 24px 28px;
+  background: var(--card);
+  border: 1px solid #e1ded8;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: 0.3px;
+}
+
+label {
+  display: block;
+  margin: 18px 0;
+  font-size: 15px;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 220px;
+  padding: 6px 8px;
+  margin-top: 6px;
+  border: 1px solid #c9c4bb;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.actions {
+  margin-top: 22px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button {
+  border: 1px solid #0a4b46;
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button#reset {
+  background: #ffffff;
+  color: #0a4b46;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}

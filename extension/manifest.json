@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Partial Auto-Translate",
+  "version": "0.1.0",
+  "description": "Auto-translates a percentage of YouTube caption sentences for language exposure and adapts based on feedback.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://libretranslate.de/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
