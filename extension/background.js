@@ -1,16 +1,31 @@
-const LIBRE_TRANSLATE_URL = "https://libretranslate.com/translate";
+const GOOGLE_TRANSLATE_URL =
+  "https://translation.googleapis.com/language/translate/v2";
+
+function getApiKey() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get({ apiKey: "" }, (cfg) => {
+      resolve(cfg.apiKey || "");
+    });
+  });
+}
 
 async function translateText(text, targetLang) {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    throw new Error("Missing Google Translate API key.");
+  }
+
   const body = {
     q: text,
-    source: "auto",
     target: targetLang,
     format: "text"
   };
 
-  const res = await fetch(LIBRE_TRANSLATE_URL, {
+  const res = await fetch(`${GOOGLE_TRANSLATE_URL}?key=${encodeURIComponent(apiKey)}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify(body)
   });
 

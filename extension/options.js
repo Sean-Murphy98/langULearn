@@ -1,5 +1,6 @@
 const defaults = {
   targetLang: "es",
+  apiKey: "",
   percent: 30,
   step: 5,
   minPercent: 10,
@@ -8,6 +9,7 @@ const defaults = {
 
 const els = {
   targetLang: document.getElementById("targetLang"),
+  apiKey: document.getElementById("apiKey"),
   percent: document.getElementById("percent"),
   percentValue: document.getElementById("percentValue"),
   step: document.getElementById("step"),
@@ -25,6 +27,7 @@ function clamp(n, min, max) {
 function load() {
   chrome.storage.local.get(defaults, (cfg) => {
     els.targetLang.value = cfg.targetLang;
+    els.apiKey.value = cfg.apiKey;
     els.percent.value = cfg.percent;
     els.step.value = cfg.step;
     els.minPercent.value = cfg.minPercent;
@@ -41,6 +44,7 @@ function save() {
 
   const cfg = {
     targetLang: els.targetLang.value.trim() || defaults.targetLang,
+    apiKey: els.apiKey.value.trim(),
     percent,
     step,
     minPercent: Math.min(minPercent, maxPercent),
