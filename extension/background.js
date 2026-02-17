@@ -1,4 +1,4 @@
-const LIBRE_TRANSLATE_URL = "https://libretranslate.de/translate";
+const LIBRE_TRANSLATE_URL = "https://libretranslate.com/translate";
 
 async function translateText(text, targetLang) {
   const body = {
