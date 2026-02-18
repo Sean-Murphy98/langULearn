@@ -11,14 +11,19 @@
       <p class="muted">Adjust how many caption sentences are translated and which language to target.</p>
 
       <label>
-        Target language (ISO code, e.g., es, fr, de)
-        <input id="targetLang" type="text" placeholder="es" />
+        Target language
+        <select id="targetLang"></select>
+        <div id="langStatus" class="muted"></div>
       </label>
 
       <label>
         Google Translate API key
         <input id="apiKey" type="password" placeholder="AIza..." />
-        <div class="muted">Stored locally in this browser.</div>
+        <div class="row">
+          <span class="muted">Stored locally in this browser.</span>
+          <button id="testKey" type="button">Test API key</button>
+        </div>
+        <div id="testStatus" class="muted"></div>
       </label>
 
       <label>

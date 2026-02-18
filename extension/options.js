@@ -9,7 +9,10 @@ const defaults = {
 
 const els = {
   targetLang: document.getElementById("targetLang"),
+  langStatus: document.getElementById("langStatus"),
   apiKey: document.getElementById("apiKey"),
+  testKey: document.getElementById("testKey"),
+  testStatus: document.getElementById("testStatus"),
   percent: document.getElementById("percent"),
   percentValue: document.getElementById("percentValue"),
   step: document.getElementById("step"),
@@ -33,6 +36,7 @@ function load() {
     els.minPercent.value = cfg.minPercent;
     els.maxPercent.value = cfg.maxPercent;
     els.percentValue.textContent = `${cfg.percent}%`;
+    loadLanguages(cfg.apiKey, cfg.targetLang);
   });
 }
 
@@ -65,5 +69,97 @@ els.save.addEventListener("click", save);
 els.reset.addEventListener("click", () => {
   chrome.storage.local.set(defaults, load);
 });
+
+async function testApiKey() {
+  const key = els.apiKey.value.trim();
+  if (!key) {
+    els.testStatus.textContent = "Enter an API key first.";
+    return;
+  }
+
+  els.testStatus.textContent = "Testing...";
+  try {
+    const res = await fetch(
+      `https://translation.googleapis.com/language/translate/v2?key=${encodeURIComponent(key)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q: "Hello", target: "es", format: "text" })
+      }
+    );
+
+    if (!res.ok) {
+      const msg = await res.text();
+      els.testStatus.textContent = `Failed: ${res.status} ${msg}`;
+      return;
+    }
+
+    const data = await res.json();
+    const translated =
+      data &&
+      data.data &&
+      Array.isArray(data.data.translations) &&
+      data.data.translations[0] &&
+      data.data.translations[0].translatedText;
+
+    if (translated) {
+      els.testStatus.textContent = "Success: key is valid.";
+      loadLanguages(key, els.targetLang.value);
+    } else {
+      els.testStatus.textContent = "Unexpected response; check API setup.";
+    }
+  } catch (err) {
+    els.testStatus.textContent = `Error: ${String(err)}`;
+  }
+}
+
+els.testKey.addEventListener("click", testApiKey);
+
+async function loadLanguages(apiKey, selected) {
+  els.langStatus.textContent = "";
+  els.targetLang.innerHTML = "";
+
+  if (!apiKey) {
+    els.langStatus.textContent = "Enter an API key to load languages.";
+    const opt = document.createElement("option");
+    opt.value = defaults.targetLang;
+    opt.textContent = defaults.targetLang;
+    els.targetLang.appendChild(opt);
+    els.targetLang.value = selected || defaults.targetLang;
+    return;
+  }
+
+  els.langStatus.textContent = "Loading languages...";
+  try {
+    const res = await fetch(
+      `https://translation.googleapis.com/language/translate/v2/languages?target=en&key=${encodeURIComponent(
+        apiKey
+      )}`
+    );
+    if (!res.ok) {
+      const msg = await res.text();
+      els.langStatus.textContent = `Failed to load: ${res.status} ${msg}`;
+      return;
+    }
+    const data = await res.json();
+    const langs = data && data.data && data.data.languages;
+    if (!Array.isArray(langs) || !langs.length) {
+      els.langStatus.textContent = "No languages returned.";
+      return;
+    }
+
+    langs.forEach((lang) => {
+      const opt = document.createElement("option");
+      opt.value = lang.language;
+      opt.textContent = `${lang.name} (${lang.language})`;
+      els.targetLang.appendChild(opt);
+    });
+
+    els.targetLang.value = selected || defaults.targetLang;
+    els.langStatus.textContent = "";
+  } catch (err) {
+    els.langStatus.textContent = `Error: ${String(err)}`;
+  }
+}
 
 load();

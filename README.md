@@ -7,6 +7,7 @@ A Chrome extension for language learners that auto-translates a configurable per
 - Uses Google Cloud Translation API (v2) with an API key stored locally.
 - End-of-video survey adjusts the translation percentage over time.
 - Partial captions only show the last word to reduce spoilers.
+- Options page includes a Test API Key button and a language dropdown loaded from the supported languages endpoint.
 
 ## How It Works
 - Captions are monitored on YouTube pages.
@@ -22,7 +23,7 @@ A Chrome extension for language learners that auto-translates a configurable per
 
 ## Configuration
 Available in the options page:
-- Target language (ISO code, e.g., `es`, `fr`, `de`)
+- Target language (dropdown loaded from Google Translate supported languages)
 - Translation percentage
 - Adjustment step after survey
 - Minimum and maximum translation percentage
@@ -44,7 +45,5 @@ You must enable the Cloud Translation API and billing in your Google Cloud proje
 - API usage is billed by Google; monitor your quota and usage.
 
 ## Next Ideas
-- Add a “Test API key” button.
-- Add language list dropdown from the supported languages endpoint.
 - Per-channel or per-video adaptation.
 - A quick in-player toggle to pause translation.
