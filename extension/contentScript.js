@@ -89,7 +89,7 @@ async function processCaptionSpan(span, videoId) {
 function startCaptionObserver() {
   if (captionObserver) return;
 
-  const container = document.body;
+  const container = document.querySelector(".ytp-caption-window-container");
   captionObserver = new MutationObserver(() => {
     const spans = document.querySelectorAll(".ytp-caption-segment");
     if (!spans.length) return;
