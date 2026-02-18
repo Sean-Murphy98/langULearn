@@ -5,7 +5,7 @@
     <title>YouTube Partial Auto-Translate Options</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="options-page">
     <div class="container">
       <h1>Partial Auto-Translate</h1>
       <p class="muted">Adjust how many caption sentences are translated and which language to target.</p>
@@ -18,7 +18,10 @@
 
       <label>
         Google Translate API key
-        <input id="apiKey" type="password" placeholder="AIza..." />
+        <div class="field-with-action">
+          <input id="apiKey" type="password" placeholder="AIza..." />
+          <button id="toggleApiKey" type="button">Show</button>
+        </div>
         <div class="row">
           <span class="muted">Stored locally in this browser.</span>
           <button id="testKey" type="button">Test API key</button>

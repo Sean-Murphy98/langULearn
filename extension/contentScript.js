@@ -111,30 +111,32 @@ function stopCaptionObserver() {
   }
 }
 
+function ensureOverlayStyles() {
+  if (document.getElementById("pat-overlay-styles")) return;
+  const link = document.createElement("link");
+  link.id = "pat-overlay-styles";
+  link.rel = "stylesheet";
+  link.href = chrome.runtime.getURL("styles.css");
+  const target = document.head || document.documentElement;
+  if (target) {
+    target.appendChild(link);
+  }
+}
+
 function renderSurvey() {
   if (overlayEl) return;
+  ensureOverlayStyles();
 
   overlayEl = document.createElement("div");
-  overlayEl.style.cssText = `
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    background: rgba(20, 20, 20, 0.95);
-    color: #fff;
-    padding: 14px 16px;
-    border-radius: 12px;
-    z-index: 999999;
-    max-width: 320px;
-    font-family: Arial, sans-serif;
-  `;
+  overlayEl.className = "pat-overlay";
 
   overlayEl.innerHTML = `
-    <div style="font-size:14px; margin-bottom:10px;">
+    <div class="pat-overlay__question">
       Did you fully understand the entire video?
     </div>
-    <div style="display:flex; gap:8px;">
-      <button data-answer="yes" style="flex:1; padding:6px 8px;">Yes</button>
-      <button data-answer="no" style="flex:1; padding:6px 8px;">No</button>
+    <div class="pat-overlay__actions">
+      <button class="pat-overlay__button" data-answer="yes">Yes</button>
+      <button class="pat-overlay__button" data-answer="no">No</button>
     </div>
   `;
 

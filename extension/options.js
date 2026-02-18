@@ -11,6 +11,7 @@ const els = {
   targetLang: document.getElementById("targetLang"),
   langStatus: document.getElementById("langStatus"),
   apiKey: document.getElementById("apiKey"),
+  toggleApiKey: document.getElementById("toggleApiKey"),
   testKey: document.getElementById("testKey"),
   testStatus: document.getElementById("testStatus"),
   percent: document.getElementById("percent"),
@@ -27,6 +28,47 @@ function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
 }
 
+function syncPercentBounds() {
+  const minVal = clamp(Number(els.minPercent.value), 0, 100);
+  const maxVal = clamp(Number(els.maxPercent.value), 0, 100);
+  els.percent.min = String(minVal);
+  els.percent.max = String(maxVal);
+
+  const percentVal = clamp(Number(els.percent.value), minVal, maxVal);
+  if (Number(els.percent.value) !== percentVal) {
+    els.percent.value = String(percentVal);
+  }
+  els.percentValue.textContent = `${els.percent.value}%`;
+}
+
+function syncMinMaxBounds() {
+  const minVal = clamp(Number(els.minPercent.value), 0, 100);
+  const maxVal = clamp(Number(els.maxPercent.value), 0, 100);
+
+  els.minPercent.min = "0";
+  els.minPercent.max = String(maxVal);
+  els.maxPercent.min = String(minVal);
+  els.maxPercent.max = "100";
+
+  if (Number(els.minPercent.value) !== minVal) {
+    els.minPercent.value = String(minVal);
+  }
+  if (Number(els.maxPercent.value) !== maxVal) {
+    els.maxPercent.value = String(maxVal);
+  }
+}
+
+function normalizeMinMaxInputs() {
+  const minVal = clamp(Number(els.minPercent.value), 0, 100);
+  const maxVal = clamp(Number(els.maxPercent.value), 0, 100);
+  const nextMin = Math.min(minVal, maxVal);
+  const nextMax = Math.max(minVal, maxVal);
+  els.minPercent.value = String(nextMin);
+  els.maxPercent.value = String(nextMax);
+  syncMinMaxBounds();
+  syncPercentBounds();
+}
+
 function load() {
   chrome.storage.local.get(defaults, (cfg) => {
     els.targetLang.value = cfg.targetLang;
@@ -36,6 +78,8 @@ function load() {
     els.minPercent.value = cfg.minPercent;
     els.maxPercent.value = cfg.maxPercent;
     els.percentValue.textContent = `${cfg.percent}%`;
+    syncMinMaxBounds();
+    syncPercentBounds();
     loadLanguages(cfg.apiKey, cfg.targetLang);
   });
 }
@@ -64,6 +108,15 @@ function save() {
 els.percent.addEventListener("input", () => {
   els.percentValue.textContent = `${els.percent.value}%`;
 });
+
+els.toggleApiKey.addEventListener("click", () => {
+  const isPassword = els.apiKey.type === "password";
+  els.apiKey.type = isPassword ? "text" : "password";
+  els.toggleApiKey.textContent = isPassword ? "Hide" : "Show";
+});
+
+els.minPercent.addEventListener("input", normalizeMinMaxInputs);
+els.maxPercent.addEventListener("input", normalizeMinMaxInputs);
 
 els.save.addEventListener("click", save);
 els.reset.addEventListener("click", () => {
