@@ -21,6 +21,7 @@
 - Prefer `camelCase` for variables and functions.
 - Keep DOM data attributes prefixed with `pat` (e.g., `data-pat-processed`).
 - Keep changes minimal and readable; avoid introducing dependencies unless necessary.
+- For any design/UI changes, refer to `Structure.png` before making edits.
 
 ## Testing Guidelines
 - No test framework is set up.
