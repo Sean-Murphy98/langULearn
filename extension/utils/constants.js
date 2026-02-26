@@ -11,7 +11,20 @@ pat.constants = {
     maxPercent: 80
   },
   // Survey UI route for background to open.
-  surveyPath: "ui/survey/survey.html"
+  surveyPath: "ui/survey/survey.html",
+  // Analytics UI route for background to open.
+  analyticsPath: "ui/analytics/analytics.html",
+  analyticsDefaults: {
+    totalWatchSeconds: 0,
+    languageWatchSeconds: {},
+    survey: {
+      total: 0,
+      understood: 0,
+      notUnderstood: 0
+    },
+    seenVideoIds: {},
+    lastUpdatedAt: ""
+  }
 };
 
 // Allow unit tests in Node without affecting extension runtime.

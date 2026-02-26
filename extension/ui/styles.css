@@ -9,7 +9,8 @@
 }
 
 .popup-page,
-.survey-page {
+.survey-page,
+.analytics-page {
   margin: 0;
   font-family: "Georgia", "Times New Roman", serif;
   background: radial-gradient(900px 360px at 20% -10%, #e9f0ec, var(--bg));
@@ -71,4 +72,54 @@
 
 .survey-page .survey-actions button {
   flex: 1;
+}
+
+.analytics-page .container {
+  max-width: 780px;
+  margin: 28px auto;
+  padding: 24px 26px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.analytics-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fcfbf9;
+  padding: 14px;
+}
+
+.analytics-card h2 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.analytics-value {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+.analytics-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.analytics-list li + li {
+  margin-top: 4px;
+}
+
+.analytics-empty {
+  color: var(--muted);
+  margin: 0;
 }

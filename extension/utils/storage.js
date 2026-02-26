@@ -15,6 +15,26 @@ function setConfig(cfg) {
   });
 }
 
+// Read analytics state with defaults applied.
+function getAnalytics() {
+  const defaults =
+    pat.constants && pat.constants.analyticsDefaults
+      ? pat.constants.analyticsDefaults
+      : {};
+  return new Promise((resolve) => {
+    chrome.storage.local.get({ analytics: defaults }, (data) => {
+      resolve(data.analytics || defaults);
+    });
+  });
+}
+
+// Persist analytics state.
+function setAnalytics(analytics) {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ analytics }, () => resolve());
+  });
+}
+
 // Listen for config changes in chrome.storage.local.
 function onConfigChange(handler) {
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -26,5 +46,7 @@ function onConfigChange(handler) {
 pat.storage = {
   getConfig,
   setConfig,
+  getAnalytics,
+  setAnalytics,
   onConfigChange
 };
