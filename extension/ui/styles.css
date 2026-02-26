@@ -1,0 +1,74 @@
+:root {
+  color-scheme: light;
+  --bg: #f7f3ed;
+  --card: #ffffff;
+  --text: #1f1f1f;
+  --muted: #6b6b6b;
+  --accent: #0f766e;
+  --border: #e1ded8;
+}
+
+.popup-page,
+.survey-page {
+  margin: 0;
+  font-family: "Georgia", "Times New Roman", serif;
+  background: radial-gradient(900px 360px at 20% -10%, #e9f0ec, var(--bg));
+  color: var(--text);
+}
+
+.popup-page .container {
+  width: 340px;
+  padding: 16px 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.popup-page h1 {
+  letter-spacing: 0.2px;
+}
+
+.popup-page button:not(.btn),
+.survey-page button:not(.btn) {
+  border: 1px solid #0a4b46;
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.popup-page .muted,
+.survey-page .muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.survey-page .container {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 24px 26px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.survey-page h1 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.survey-page p:not(.text-muted) {
+  margin: 0 0 18px;
+}
+
+.survey-page .survey-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.survey-page .survey-actions button {
+  flex: 1;
+}

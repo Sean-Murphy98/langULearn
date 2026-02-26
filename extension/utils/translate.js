@@ -1,14 +1,15 @@
+var pat = (globalThis.pat = globalThis.pat || {});
+
 const GOOGLE_TRANSLATE_URL =
   "https://translation.googleapis.com/language/translate/v2";
 
-function getApiKey() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get({ apiKey: "" }, (cfg) => {
-      resolve(cfg.apiKey || "");
-    });
-  });
+// Resolve API key from local storage.
+async function getApiKey() {
+  const cfg = await pat.storage.getConfig();
+  return cfg.apiKey || "";
 }
 
+// Call Google Translate API v2 for a single text.
 async function translateText(text, targetLang) {
   const apiKey = await getApiKey();
   if (!apiKey) {
@@ -44,13 +45,6 @@ async function translateText(text, targetLang) {
   return translated || "";
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (!msg || msg.type !== "TRANSLATE") return;
-
-  const { text, targetLang } = msg;
-  translateText(text, targetLang)
-    .then((translated) => sendResponse({ ok: true, translated }))
-    .catch((err) => sendResponse({ ok: false, error: String(err) }));
-
-  return true; // async response
-});
+pat.translate = {
+  translateText
+};

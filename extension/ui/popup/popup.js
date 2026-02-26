@@ -1,11 +1,4 @@
-const defaults = {
-  targetLang: "es",
-  apiKey: "",
-  percent: 30,
-  step: 5,
-  minPercent: 10,
-  maxPercent: 80
-};
+const defaults = pat.constants.defaults;
 
 const els = {
   targetLang: document.getElementById("targetLang"),
@@ -24,17 +17,13 @@ const els = {
   status: document.getElementById("status")
 };
 
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
-
 function syncPercentBounds() {
-  const minVal = clamp(Number(els.minPercent.value), 0, 100);
-  const maxVal = clamp(Number(els.maxPercent.value), 0, 100);
+  const minVal = pat.helpers.clamp(Number(els.minPercent.value), 0, 100);
+  const maxVal = pat.helpers.clamp(Number(els.maxPercent.value), 0, 100);
   els.percent.min = String(minVal);
   els.percent.max = String(maxVal);
 
-  const percentVal = clamp(Number(els.percent.value), minVal, maxVal);
+  const percentVal = pat.helpers.clamp(Number(els.percent.value), minVal, maxVal);
   if (Number(els.percent.value) !== percentVal) {
     els.percent.value = String(percentVal);
   }
@@ -42,8 +31,8 @@ function syncPercentBounds() {
 }
 
 function syncMinMaxBounds() {
-  const minVal = clamp(Number(els.minPercent.value), 0, 100);
-  const maxVal = clamp(Number(els.maxPercent.value), 0, 100);
+  const minVal = pat.helpers.clamp(Number(els.minPercent.value), 0, 100);
+  const maxVal = pat.helpers.clamp(Number(els.maxPercent.value), 0, 100);
 
   els.minPercent.min = "0";
   els.minPercent.max = String(maxVal);
@@ -59,8 +48,8 @@ function syncMinMaxBounds() {
 }
 
 function normalizeMinMaxInputs() {
-  const minVal = clamp(Number(els.minPercent.value), 0, 100);
-  const maxVal = clamp(Number(els.maxPercent.value), 0, 100);
+  const minVal = pat.helpers.clamp(Number(els.minPercent.value), 0, 100);
+  const maxVal = pat.helpers.clamp(Number(els.maxPercent.value), 0, 100);
   const nextMin = Math.min(minVal, maxVal);
   const nextMax = Math.max(minVal, maxVal);
   els.minPercent.value = String(nextMin);
@@ -70,7 +59,7 @@ function normalizeMinMaxInputs() {
 }
 
 function load() {
-  chrome.storage.local.get(defaults, (cfg) => {
+  pat.storage.getConfig().then((cfg) => {
     els.targetLang.value = cfg.targetLang;
     els.apiKey.value = cfg.apiKey;
     els.percent.value = cfg.percent;
@@ -85,10 +74,10 @@ function load() {
 }
 
 function save() {
-  const percent = clamp(Number(els.percent.value), 0, 100);
-  const minPercent = clamp(Number(els.minPercent.value), 0, 100);
-  const maxPercent = clamp(Number(els.maxPercent.value), 0, 100);
-  const step = clamp(Number(els.step.value), 1, 20);
+  const percent = pat.helpers.clamp(Number(els.percent.value), 0, 100);
+  const minPercent = pat.helpers.clamp(Number(els.minPercent.value), 0, 100);
+  const maxPercent = pat.helpers.clamp(Number(els.maxPercent.value), 0, 100);
+  const step = pat.helpers.clamp(Number(els.step.value), 1, 20);
 
   const cfg = {
     targetLang: els.targetLang.value.trim() || defaults.targetLang,
@@ -99,7 +88,7 @@ function save() {
     maxPercent: Math.max(minPercent, maxPercent)
   };
 
-  chrome.storage.local.set(cfg, () => {
+  pat.storage.setConfig(cfg).then(() => {
     els.status.textContent = "Saved.";
     setTimeout(() => (els.status.textContent = ""), 1200);
   });
@@ -120,7 +109,7 @@ els.maxPercent.addEventListener("input", normalizeMinMaxInputs);
 
 els.save.addEventListener("click", save);
 els.reset.addEventListener("click", () => {
-  chrome.storage.local.set(defaults, load);
+  pat.storage.setConfig(defaults).then(load);
 });
 
 async function testApiKey() {
