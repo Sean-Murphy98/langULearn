@@ -14,6 +14,7 @@ const els = {
   maxPercent: document.getElementById("maxPercent"),
   save: document.getElementById("save"),
   reset: document.getElementById("reset"),
+  openAnalytics: document.getElementById("openAnalytics"),
   status: document.getElementById("status")
 };
 
@@ -110,6 +111,9 @@ els.maxPercent.addEventListener("input", normalizeMinMaxInputs);
 els.save.addEventListener("click", save);
 els.reset.addEventListener("click", () => {
   pat.storage.setConfig(defaults).then(load);
+});
+els.openAnalytics.addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" });
 });
 
 async function testApiKey() {
