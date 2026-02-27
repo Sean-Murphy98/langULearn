@@ -5,6 +5,7 @@ pat.constants = {
   defaults: {
     targetLang: "es",
     apiKey: "",
+    translationEnabled: true,
     percent: 30,
     step: 5,
     minPercent: 10,
