@@ -86,6 +86,7 @@ function load() {
 }
 
 function save() {
+  console.log("saved");
   const percent = pat.helpers.clamp(Number(els.percent.value), 0, 100);
   const minPercent = pat.helpers.clamp(Number(els.minPercent.value), 0, 100);
   const maxPercent = pat.helpers.clamp(Number(els.maxPercent.value), 0, 100);
@@ -105,6 +106,13 @@ function save() {
     els.status.textContent = "Saved.";
     setTimeout(() => (els.status.textContent = ""), 1200);
   });
+
+  if (!cfg.translationEnabled){
+    chrome.action.setBadgeText({text: "off"})
+  }
+  else{
+    chrome.action.setBadgeText({text: ""})
+  }
 }
 
 els.percent.addEventListener("input", () => {
