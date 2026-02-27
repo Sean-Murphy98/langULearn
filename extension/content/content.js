@@ -33,7 +33,7 @@ function attachWatchTimeTracker() {
   const startTicker = () => {
     if (watchTickerId) return;
     watchTickerId = setInterval(() => {
-      if (video.paused || video.ended || video.readyState < 2) return;
+      if (video.paused || video.ended || video.readyState < 2 || config.translationEnabled === false) return;
       pendingWatchSeconds += 5;
       if (pendingWatchSeconds >= 15) {
         flushWatchTime();
@@ -48,9 +48,7 @@ function attachWatchTimeTracker() {
 
   video.addEventListener("play", startTicker);
   video.addEventListener("pause", stopTicker);
-  video.addEventListener("ended", () => {
-    stopTicker();
-  });
+  video.addEventListener("ended", stopTicker);
 
   if (!video.paused && !video.ended) {
     startTicker();

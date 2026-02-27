@@ -7,6 +7,7 @@ const els = {
   toggleApiKey: document.getElementById("toggleApiKey"),
   testKey: document.getElementById("testKey"),
   testStatus: document.getElementById("testStatus"),
+  translationEnabled: document.getElementById("translationEnabled"),
   percent: document.getElementById("percent"),
   percentValue: document.getElementById("percentValue"),
   step: document.getElementById("step"),
@@ -17,6 +18,14 @@ const els = {
   openAnalytics: document.getElementById("openAnalytics"),
   status: document.getElementById("status")
 };
+
+function syncTranslationControls() {
+  const enabled = Boolean(els.translationEnabled.checked);
+  els.percent.disabled = !enabled;
+  els.step.disabled = !enabled;
+  els.minPercent.disabled = !enabled;
+  els.maxPercent.disabled = !enabled;
+}
 
 function syncPercentBounds() {
   const minVal = pat.helpers.clamp(Number(els.minPercent.value), 0, 100);
@@ -63,11 +72,13 @@ function load() {
   pat.storage.getConfig().then((cfg) => {
     els.targetLang.value = cfg.targetLang;
     els.apiKey.value = cfg.apiKey;
+    els.translationEnabled.checked = cfg.translationEnabled !== false;
     els.percent.value = cfg.percent;
     els.step.value = cfg.step;
     els.minPercent.value = cfg.minPercent;
     els.maxPercent.value = cfg.maxPercent;
     els.percentValue.textContent = `${cfg.percent}%`;
+    syncTranslationControls();
     syncMinMaxBounds();
     syncPercentBounds();
     loadLanguages(cfg.apiKey, cfg.targetLang);
@@ -75,6 +86,7 @@ function load() {
 }
 
 function save() {
+  console.log("saved");
   const percent = pat.helpers.clamp(Number(els.percent.value), 0, 100);
   const minPercent = pat.helpers.clamp(Number(els.minPercent.value), 0, 100);
   const maxPercent = pat.helpers.clamp(Number(els.maxPercent.value), 0, 100);
@@ -83,6 +95,7 @@ function save() {
   const cfg = {
     targetLang: els.targetLang.value.trim() || defaults.targetLang,
     apiKey: els.apiKey.value.trim(),
+    translationEnabled: Boolean(els.translationEnabled.checked),
     percent,
     step,
     minPercent: Math.min(minPercent, maxPercent),
@@ -93,6 +106,13 @@ function save() {
     els.status.textContent = "Saved.";
     setTimeout(() => (els.status.textContent = ""), 1200);
   });
+
+  if (!cfg.translationEnabled){
+    chrome.action.setBadgeText({text: "off"})
+  }
+  else{
+    chrome.action.setBadgeText({text: ""})
+  }
 }
 
 els.percent.addEventListener("input", () => {
@@ -107,6 +127,7 @@ els.toggleApiKey.addEventListener("click", () => {
 
 els.minPercent.addEventListener("input", normalizeMinMaxInputs);
 els.maxPercent.addEventListener("input", normalizeMinMaxInputs);
+els.translationEnabled.addEventListener("change", syncTranslationControls);
 
 els.save.addEventListener("click", save);
 els.reset.addEventListener("click", () => {

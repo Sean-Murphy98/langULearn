@@ -70,6 +70,14 @@ function shouldTranslateWithBudget(videoId, percent) {
 async function processCaptionSpan(span, videoId, config) {
   const original = span.textContent || "";
   if (!original.trim()) return;
+  if (config.translationEnabled === false) {
+    const plainText = span.dataset.patOriginal || original;
+    if (span.textContent !== plainText) {
+      span.textContent = plainText;
+    }
+    span.dataset.patProcessed = span.textContent;
+    return;
+  }
   if (span.dataset.patProcessed === original) return;
 
   span.dataset.patOriginal = original;
