@@ -35,6 +35,63 @@ function setAnalytics(analytics) {
   });
 }
 
+// Read cached quiz word pairs.
+function getQuizWordPairs() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get({ quizWordPairs: [] }, (data) => {
+      resolve(Array.isArray(data.quizWordPairs) ? data.quizWordPairs : []);
+    });
+  });
+}
+
+// Add recent quiz word pairs with dedupe and a small rolling limit.
+function addQuizWordPairs(pairs) {
+  const nextPairs = Array.isArray(pairs) ? pairs : [];
+  if (!nextPairs.length) return Promise.resolve([]);
+
+  return new Promise((resolve) => {
+    chrome.storage.local.get({ quizWordPairs: [] }, (data) => {
+      const existing = Array.isArray(data.quizWordPairs) ? data.quizWordPairs : [];
+      const merged = [...existing];
+      const indexByKey = new Map();
+
+      merged.forEach((pair, idx) => {
+        if (!pair || !pair.source || !pair.target) return;
+        indexByKey.set(`${pair.source.toLowerCase()}::${pair.target.toLowerCase()}`, idx);
+      });
+
+      nextPairs.forEach((pair) => {
+        if (!pair || !pair.source || !pair.target) return;
+        const source = String(pair.source).trim();
+        const target = String(pair.target).trim();
+        if (!source || !target) return;
+        const item = {
+          source,
+          target,
+          updatedAt: new Date().toISOString()
+        };
+        const key = `${source.toLowerCase()}::${target.toLowerCase()}`;
+        if (indexByKey.has(key)) {
+          merged[indexByKey.get(key)] = item;
+          return;
+        }
+        indexByKey.set(key, merged.length);
+        merged.push(item);
+      });
+
+      const trimmed = merged.slice(-60);
+      chrome.storage.local.set({ quizWordPairs: trimmed }, () => resolve(trimmed));
+    });
+  });
+}
+
+// Clear cached quiz word pairs after a quiz is shown/completed.
+function clearQuizWordPairs() {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ quizWordPairs: [] }, () => resolve());
+  });
+}
+
 // Listen for config changes in chrome.storage.local.
 function onConfigChange(handler) {
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -48,5 +105,8 @@ pat.storage = {
   setConfig,
   getAnalytics,
   setAnalytics,
+  getQuizWordPairs,
+  addQuizWordPairs,
+  clearQuizWordPairs,
   onConfigChange
 };

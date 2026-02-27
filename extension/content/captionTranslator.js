@@ -3,6 +3,34 @@ var pat = (globalThis.pat = globalThis.pat || {});
 let translationCache = new Map();
 let budgetByVideoId = new Map();
 
+function getWordTokens(text) {
+  return String(text || "")
+    .match(/[\p{L}\p{M}'’-]+/gu)
+    ?.map((token) => token.trim())
+    .filter(Boolean) || [];
+}
+
+function cacheQuizWordPairs(sourceText, translatedText) {
+  if (!pat.storage || typeof pat.storage.addQuizWordPairs !== "function") return;
+
+  const sourceTokens = getWordTokens(sourceText);
+  const translatedTokens = getWordTokens(translatedText);
+  if (!sourceTokens.length || sourceTokens.length !== translatedTokens.length) return;
+
+  const pairs = [];
+  for (let i = 0; i < sourceTokens.length; i += 1) {
+    const source = sourceTokens[i];
+    const target = translatedTokens[i];
+    if (!source || !target) continue;
+    if (source.toLowerCase() === target.toLowerCase()) continue;
+    if (source.length < 2 || target.length < 2) continue;
+    pairs.push({ source, target });
+  }
+  if (!pairs.length) return;
+
+  pat.storage.addQuizWordPairs(pairs);
+}
+
 // Translate with per-session caching to avoid repeat API calls.
 function translateSentence(sentence, targetLang) {
   if (!sentence) return Promise.resolve(sentence);
@@ -15,6 +43,7 @@ function translateSentence(sentence, targetLang) {
       (resp) => {
         if (resp && resp.ok && resp.translated) {
           translationCache.set(sentence, resp.translated);
+          cacheQuizWordPairs(sentence, resp.translated);
           resolve(resp.translated);
         } else {
           resolve(sentence);
